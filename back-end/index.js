@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const { check, validationResult } = require('express-validator');
 
 const server = express();
 
@@ -14,7 +15,10 @@ server.get("/posts", (req, res) => {
     })
 })
 
-server.post("/post", (req, res) => {
+server.post("/post", [
+    check('title').trim().escape(),
+    check('author').trim().escape()
+  ], (req, res) => {
     console.log(req.body)
     fs.writeFile('post.txt', JSON.stringify(req.body), () => {
         "Archivo escrito con éxito!"

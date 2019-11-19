@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+Titulo del anterior post: <div class="postTitle"></div>
+<br>
+Autor del anterior post: <div class="postAuthor"></div>
+<br>
+
+Titulo de tu post: <input class="titulo" type="text">
+Autor: <input class="author" type="text">
+<button class="send">Submit</button>
+
+<script>
+
+function httpGet(theUrl, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl); 
+    xmlHttp.send(null);
+}
+
+function httpPost(theUrl, body, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("POST", theUrl); 
+    xmlHttp.setRequestHeader("Content-Type", "application/json");
+    xmlHttp.send(body);
+}
+
+const postTitle = document.querySelectorAll('.postTitle')[0]
+const postAuthor = document.querySelectorAll('.postAuthor')[0]
+
+httpGet('http://localhost:3000/posts', (data) => {
+    postTitle.innerHTML = JSON.parse(data)['title'];
+    postAuthor.innerHTML = JSON.parse(data)['author'];
+
+})
+
+const sendButton = document.querySelectorAll('.send')[0]
+
+sendButton.addEventListener('click', () => {
+    const title = document.querySelectorAll('.titulo')[0].value;
+    const author = document.querySelectorAll('.author')[0].value;
+    httpPost('http://localhost:3000/post',
+    JSON.stringify({"title": title, "author": author}), 
+    (resp) => {
+        console.log(resp)
+    })
+})
+
+</script>
+
+</html>
